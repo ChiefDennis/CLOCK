@@ -1,0 +1,29 @@
+server {
+    listen 80;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Proxy API calls
+    location /api/ {
+        proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT}/api/;  
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+
+    }
+    
+    location /auth/ {
+        proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT}/auth/; 
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location /docs/ {
+        proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT}/docs/; 
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}

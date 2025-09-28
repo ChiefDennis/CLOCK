@@ -1,0 +1,75 @@
+<h1 class="page-title">Pending Actions</h1>
+
+<div class="card">
+  <div class="card-header">
+    <button mat-raised-button color="primary" (click)="refreshActions()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+
+  <div class="table-container" *ngIf="!loading; else loadingTpl">
+    <table mat-table [dataSource]="dataSource" matSort matSortActive="status" matSortDirection="desc">
+
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef> Action </th>
+        <td mat-cell *matCellDef="let element"> {{element.action_type}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="resource">
+        <th mat-header-cell *matHeaderCellDef> Resource </th>
+        <td mat-cell *matCellDef="let element"> {{element.resource_id}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+        <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="requested">
+        <th mat-header-cell *matHeaderCellDef> Requested </th>
+        <td mat-cell *matCellDef="let element">
+          <div class="principal-info">{{ element.created_by }}</div>
+          <div class="secondary-info">{{ element.created_at | date:'short' }}</div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="expires">
+        <th mat-header-cell *matHeaderCellDef> Expires </th>
+        <td mat-cell *matCellDef="let element">
+           <div class="secondary-info">{{ element.expires_at | date:'short' }}</div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="reviewed">
+        <th mat-header-cell *matHeaderCellDef> Reviewed </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-container *ngIf="element.reviewed_by; else notReviewed">
+            <div class="principal-info">{{ element.reviewed_by }}</div>
+            <div class="secondary-info">{{ element.reviewed_at | date:'short' }}</div>
+          </ng-container>
+          <ng-template #notReviewed>-</ng-template>
+        </td>
+      </ng-container>
+      
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="actions-header"> Actions </th>
+        <td mat-cell *matCellDef="let element" class="actions-cell">
+          <div *ngIf="element.status==='PENDING'">
+              <button (click)="approve(element)" class="btn-primary btn">Approve</button>
+              <button (click)="deny(element)" class="btn-ghost btn">Deny</button>
+          </div>
+          </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+  
+  <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+
+  <ng-template #loadingTpl>
+    <div style="padding: 24px; text-align: center;">Loading...</div>
+  </ng-template>
+</div>

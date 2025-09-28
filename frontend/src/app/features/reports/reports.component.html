@@ -1,0 +1,55 @@
+<div class="reports-container">
+  <h1 class="page-title">Reports</h1>
+  <p class="page-subtitle">Generate and manage cryptographic bills of materials (CBOM).</p>
+
+  <div class="card">
+    <div class="card-header-actions">
+      <h2>CBOM Generation</h2>
+      <button mat-raised-button color="primary" (click)="generateCbom()" [disabled]="isLoading">
+        <div *ngIf="!isLoading" class="button-content">
+          <mat-icon>assessment</mat-icon>
+          <span>Generate CBOM</span>
+        </div>
+        <mat-spinner *ngIf="isLoading" diameter="24"></mat-spinner>
+      </button>
+    </div>
+    
+    <ng-container *ngIf="cbomData">
+      <mat-divider></mat-divider>
+      <div class="preview-section">
+        <h3>Report Preview</h3>
+        <div class="preview-grid">
+          <div class="preview-item">
+            <span class="label">Serial Number</span>
+            <span class="value">{{ cbomData.serialNumber }}</span>
+          </div>
+          <div class="preview-item">
+            <span class="label">Timestamp</span>
+            <span class="value">{{ cbomData.metadata.timestamp | date:'medium' }}</span>
+          </div>
+          <div class="preview-item">
+            <span class="label">Component Count</span>
+            <span class="value">{{ cbomData.components.length }}</span>
+          </div>
+          <div class="preview-item">
+            <span class="label">Spec Version</span>
+            <span class="value">{{ cbomData.specVersion }}</span>
+          </div>
+        </div>
+        <div class="preview-actions">
+          <button mat-stroked-button color="primary" (click)="viewFullCbom()">View Full Report</button>
+          <button mat-stroked-button (click)="downloadCbom()">
+            <mat-icon>download</mat-icon>
+            <span>Download</span>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  
+  <div class="card placeholder-card">
+    <h2>Import Key Material</h2>
+    <p>This feature has not been implemented yet. In the future, it will take a CBOM and import the key metadata into the database and the system.</p>
+    <button mat-stroked-button disabled>Import CBOM</button>
+  </div>
+</div>

@@ -1,0 +1,27 @@
+nav {
+  margin-top: 16px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  
+  margin: 8px 6px; 
+  
+  color: var(--mat-sys-on-surface-variant);
+  
+  transition: background-color 0.2s ease-in-out;
+}
+
+.nav-item:not(.active):hover {
+  background: var(--mat-sys-surface-container-high);
+  cursor: pointer;
+}
+
+.nav-item.active {
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}

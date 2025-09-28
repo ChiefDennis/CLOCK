@@ -1,0 +1,153 @@
+// login.component.scss
+
+// Import theme variables if needed in a component-specific context (optional)
+@use '@angular/material' as mat;
+
+// --- Main Page Container ---
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 24px;
+  // Use a subtle gradient for a more dynamic background
+  background: radial-gradient(circle, var(--mat-sys-surface-container) 0%, var(--mat-sys-surface) 100%);
+  overflow: hidden;
+}
+
+// --- Glassmorphism Login Card ---
+.login-card {
+  max-width: 400px;
+  width: 100%;
+  padding: 40px 30px;
+  box-sizing: border-box;
+  text-align: center;
+
+  // Glass effect
+  background: color-mix(in srgb, var(--mat-sys-surface-container) 50%, transparent);
+  backdrop-filter: blur(10px);
+
+  // Styling
+  border-radius: 24px;
+  border: 1px solid color-mix(in srgb, var(--mat-sys-primary) 20%, transparent);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+// --- Typography ---
+.login-title {
+  font-size: 2.25rem; // 36px
+  font-weight: 700;
+  color: var(--mat-sys-on-surface);
+  margin: 0 0 8px 0;
+}
+
+.login-subtitle {
+  margin: 0 0 32px 0;
+  font-size: 1rem; // 16px
+  color: var(--mat-sys-on-surface-variant);
+}
+
+// --- Form & Inputs ---
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  text-align: left;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-size: 0.875rem; // 14px
+    font-weight: 500;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  input {
+    // Reset browser styles
+    border: none;
+    outline: none;
+    // Base styles
+    background: transparent;
+    border-bottom: 2px solid var(--mat-sys-outline-variant);
+    padding: 10px 4px;
+    font-size: 1rem;
+    color: var(--mat-sys-on-surface);
+    transition: border-color 0.3s ease;
+
+    &::placeholder {
+      color: var(--mat-sys-on-surface-variant);
+      opacity: 0.7;
+    }
+
+    &:focus {
+      border-bottom-color: var(--mat-sys-primary);
+    }
+  }
+}
+
+// --- Password Visibility Toggle ---
+.password-wrapper {
+  position: relative;
+
+  // Leave space for the icon button
+  input {
+    padding-right: 40px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .show-password {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+
+    // Button reset
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+
+    mat-icon {
+      color: var(--mat-sys-on-surface-variant);
+      opacity: 0.6;
+    }
+
+    &:hover {
+      background-color: var(--mat-sys-surface-container-high);
+      mat-icon {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+// --- Submit Button ---
+.btn.btn-primary {
+  margin-top: 16px;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  background-color: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+  border: none;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 15px -5px color-mix(in srgb, var(--mat-sys-primary) 50%, transparent);
+
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--mat-sys-primary) 90%, white);
+    transform: translateY(-3px);
+    box-shadow: 0 7px 20px -5px color-mix(in srgb, var(--mat-sys-primary) 60%, transparent);
+  }
+}

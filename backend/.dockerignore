@@ -1,0 +1,28 @@
+# Exclude Git and Docker related files
+.git/
+.gitignore
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Exclude README
+README.md
+
+# Exclude Python virtual environment
+venv/
+.venv/
+env/
+.env
+
+# Exclude Python cache files
+__pycache__/
+*.pyc
+
+# Exclude IDE folders
+.vscode/
+.idea/
+
+# Exclude testing artifacts
+.pytest_cache/
+.coverage
+htmlcov/

@@ -1,0 +1,176 @@
+<div class="page-container">
+  <div *ngIf="isLoading" class="loading-overlay">
+    <mat-spinner></mat-spinner>
+  </div>
+  <div *ngIf="errorMessage && !isLoading" class="error-message">
+    <mat-icon>cloud_off</mat-icon>
+    <p>{{ errorMessage }}</p>
+    <button mat-raised-button color="warn" (click)="loadAlarms()">Retry</button>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage">
+    <h1 class="page-title">Active Alerts</h1>
+    
+    <div class="alerts-board">
+      <div class="severity-column">
+        <h3 class="column-title high">High</h3>
+        <div class="card-container">
+          <mat-card *ngFor="let alarm of highAlarms" class="alarm-card severity-high">
+            <mat-card-header (click)="openAlarmDialog(alarm)">
+              <mat-icon mat-card-avatar class="high-icon">{{ getSeverityIcon(alarm.severity) }}</mat-icon>
+              <mat-card-title [title]="alarm.event_type">{{ alarm.event_type }}</mat-card-title>
+              <mat-card-subtitle>{{ alarm.timestamp | date:'medium' }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content (click)="openAlarmDialog(alarm)"><p>{{ alarm.message | truncate:150 }}</p></mat-card-content>
+            <mat-card-actions>
+              <button mat-flat-button (click)="acknowledgeAlarm(alarm)">Acknowledge</button>
+            </mat-card-actions>
+          </mat-card>
+          <div *ngIf="highAlarms.length === 0" class="no-alarms-placeholder">No active high severity alarms.</div>
+        </div>
+      </div>
+
+      <div class="severity-column">
+        <h3 class="column-title medium">Medium</h3>
+        <div class="card-container">
+          <mat-card *ngFor="let alarm of mediumAlarms" class="alarm-card severity-medium">
+            <mat-card-header (click)="openAlarmDialog(alarm)">
+              <mat-icon mat-card-avatar class="medium-icon">{{ getSeverityIcon(alarm.severity) }}</mat-icon>
+              <mat-card-title [title]="alarm.event_type">{{ alarm.event_type }}</mat-card-title>
+              <mat-card-subtitle>{{ alarm.timestamp | date:'medium' }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content (click)="openAlarmDialog(alarm)"><p>{{ alarm.message | truncate:150 }}</p></mat-card-content>
+            <mat-card-actions>
+              <button mat-flat-button (click)="acknowledgeAlarm(alarm)">Acknowledge</button>
+            </mat-card-actions>
+          </mat-card>
+          <div *ngIf="mediumAlarms.length === 0" class="no-alarms-placeholder">No active medium severity alarms.</div>
+        </div>
+      </div>
+
+      <div class="severity-column">
+        <h3 class="column-title low">Low</h3>
+        <div class="card-container">
+          <mat-card *ngFor="let alarm of lowAlarms" class="alarm-card severity-low">
+            <mat-card-header (click)="openAlarmDialog(alarm)">
+              <mat-icon mat-card-avatar class="low-icon">{{ getSeverityIcon(alarm.severity) }}</mat-icon>
+              <mat-card-title [title]="alarm.event_type">{{ alarm.event_type }}</mat-card-title>
+              <mat-card-subtitle>{{ alarm.timestamp | date:'medium' }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content (click)="openAlarmDialog(alarm)"><p>{{ alarm.message | truncate:150 }}</p></mat-card-content>
+            <mat-card-actions>
+              <button mat-flat-button (click)="acknowledgeAlarm(alarm)">Acknowledge</button>
+            </mat-card-actions>
+          </mat-card>
+          <div *ngIf="lowAlarms.length === 0" class="no-alarms-placeholder">No active low severity alarms.</div>
+        </div>
+      </div>
+
+      <div class="severity-column">
+        <h3 class="column-title info">Info</h3>
+        <div class="card-container">
+          <mat-card *ngFor="let alarm of infoAlarms" class="alarm-card severity-info">
+            <mat-card-header (click)="openAlarmDialog(alarm)">
+              <mat-icon mat-card-avatar class="info-icon">{{ getSeverityIcon(alarm.severity) }}</mat-icon>
+              <mat-card-title [title]="alarm.event_type">{{ alarm.event_type }}</mat-card-title>
+              <mat-card-subtitle>{{ alarm.timestamp | date:'medium' }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content (click)="openAlarmDialog(alarm)"><p>{{ alarm.message | truncate:150 }}</p></mat-card-content>
+            <mat-card-actions>
+              <button mat-flat-button (click)="acknowledgeAlarm(alarm)">Acknowledge</button>
+            </mat-card-actions>
+          </mat-card>
+          <div *ngIf="infoAlarms.length === 0" class="no-alarms-placeholder">No active info alarms.</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title><h2>Acknowledged History</h2></mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="alerts-board">
+          <div class="severity-column">
+            <h3 class="column-title high">High</h3>
+            <div class="card-container">
+              <mat-card *ngFor="let alarm of highAlarms_ack" class="alarm-card severity-high">
+                <mat-card-header (click)="openAlarmDialog(alarm)">
+                  <mat-icon mat-card-avatar class="high-icon">{{ getSeverityIcon(alarm.severity) }}</mat-icon>
+                  <mat-card-title [title]="alarm.event_type">{{ alarm.event_type }}</mat-card-title>
+                  <mat-card-subtitle>{{ alarm.timestamp | date:'medium' }}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content (click)="openAlarmDialog(alarm)"><p>{{ alarm.message | truncate:150 }}</p></mat-card-content>
+                <mat-card-actions>
+                  <button mat-stroked-button (click)="unacknowledgeAlarm(alarm)">Re-Activate</button>
+                </mat-card-actions>
+              </mat-card>
+              <div *ngIf="highAlarms_ack.length === 0" class="no-alarms-placeholder">No acknowledged high severity alarms.</div>
+            </div>
+          </div>
+
+          <div class="severity-column">
+            <h3 class="column-title medium">Medium</h3>
+            <div class="card-container">
+              <mat-card *ngFor="let alarm of mediumAlarms_ack" class="alarm-card severity-medium">
+                <mat-card-header (click)="openAlarmDialog(alarm)">
+                  <mat-icon mat-card-avatar class="medium-icon">{{ getSeverityIcon(alarm.severity) }}</mat-icon>
+                  <mat-card-title [title]="alarm.event_type">{{ alarm.event_type }}</mat-card-title>
+                  <mat-card-subtitle>{{ alarm.timestamp | date:'medium' }}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content (click)="openAlarmDialog(alarm)"><p>{{ alarm.message | truncate:150 }}</p></mat-card-content>
+                <mat-card-actions>
+                  <button mat-stroked-button (click)="unacknowledgeAlarm(alarm)">Re-Activate</button>
+                </mat-card-actions>
+              </mat-card>
+              <div *ngIf="mediumAlarms_ack.length === 0" class="no-alarms-placeholder">No acknowledged medium severity alarms.</div>
+            </div>
+          </div>
+
+          <div class="severity-column">
+            <h3 class="column-title low">Low</h3>
+            <div class="card-container">
+              <mat-card *ngFor="let alarm of lowAlarms_ack" class="alarm-card severity-low">
+                <mat-card-header (click)="openAlarmDialog(alarm)">
+                  <mat-icon mat-card-avatar class="low-icon">{{ getSeverityIcon(alarm.severity) }}</mat-icon>
+                  <mat-card-title [title]="alarm.event_type">{{ alarm.event_type }}</mat-card-title>
+                  <mat-card-subtitle>{{ alarm.timestamp | date:'medium' }}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content (click)="openAlarmDialog(alarm)"><p>{{ alarm.message | truncate:150 }}</p></mat-card-content>
+                <mat-card-actions>
+                  <button mat-stroked-button (click)="unacknowledgeAlarm(alarm)">Re-Activate</button>
+                </mat-card-actions>
+              </mat-card>
+              <div *ngIf="lowAlarms_ack.length === 0" class="no-alarms-placeholder">No acknowledged low severity alarms.</div>
+            </div>
+          </div>
+
+          <div class="severity-column">
+            <h3 class="column-title info">Info</h3>
+            <div class="card-container">
+              <mat-card *ngFor="let alarm of infoAlarms_ack" class="alarm-card severity-info">
+                <mat-card-header (click)="openAlarmDialog(alarm)">
+                  <mat-icon mat-card-avatar class="info-icon">{{ getSeverityIcon(alarm.severity) }}</mat-icon>
+                  <mat-card-title [title]="alarm.event_type">{{ alarm.event_type }}</mat-card-title>
+                  <mat-card-subtitle>{{ alarm.timestamp | date:'medium' }}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content (click)="openAlarmDialog(alarm)"><p>{{ alarm.message | truncate:150 }}</p></mat-card-content>
+                <mat-card-actions>
+                  <button mat-stroked-button (click)="unacknowledgeAlarm(alarm)">Re-Activate</button>
+                </mat-card-actions>
+              </mat-card>
+              <div *ngIf="infoAlarms_ack.length === 0" class="no-alarms-placeholder">No acknowledged info alarms.</div>
+            </div>
+          </div>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+
+    <div *ngIf="nextPageToken" class="load-more-container">
+      <button mat-raised-button color="primary" (click)="loadMoreAlarms()">Load More</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,100 @@
+<h1 class="page-title">Users</h1>
+
+<div class="card">
+  <div class="card-header">
+    <button mat-raised-button (click)="getUsers()" style="margin-right: 8px;">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+    <button mat-raised-button color="primary" (click)="addUser()">
+      <mat-icon>add</mat-icon>
+      New User
+    </button>
+  </div>
+
+  <div class="table-container">
+    <table mat-table [dataSource]="dataSource" matSort>
+
+      <ng-container matColumnDef="username">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Username</th>
+        <td mat-cell *matCellDef="let user">
+          <ng-container *ngIf="editingRow !== user; else editUsername">{{ user.username }}</ng-container>
+          <ng-template #editUsername>
+            <input [(ngModel)]="user.username" placeholder="Username" class="table-input" />
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Role</th>
+        <td mat-cell *matCellDef="let user">
+          <ng-container *ngIf="editingRow !== user; else editRole">
+            {{ user.role }}
+          </ng-container>
+        
+          <ng-template #editRole>
+            <mat-form-field appearance="outline" class="table-form-field">
+              <mat-select [(ngModel)]="user.role">
+                <mat-option value="admin">Admin</mat-option>
+                <mat-option value="user">User</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+        <td mat-cell *matCellDef="let user">{{ user.id }}</td>
+      </ng-container>
+      
+      <ng-container matColumnDef="enabled">
+        <th mat-header-cell *matHeaderCellDef>Enabled</th>
+        <td mat-cell *matCellDef="let user">
+           <ng-container *ngIf="editingRow !== user; else editEnabled">
+             <mat-icon [ngClass]="user.enabled ? 'enabled' : 'disabled'">
+               {{ user.enabled ? 'check_circle' : 'cancel' }}
+             </mat-icon>
+           </ng-container>
+           <ng-template #editEnabled>
+             <mat-checkbox [(ngModel)]="user.enabled"></mat-checkbox>
+           </ng-template>
+        </td>
+      </ng-container>
+      
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let user" class="actions-cell">
+          <div class="action-buttons">
+            <button *ngIf="editingRow !== user" mat-icon-button color="accent" (click)="startEdit(user)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button *ngIf="editingRow === user" mat-icon-button (click)="cancelEdit(user)">
+              <mat-icon>cancel</mat-icon>
+            </button>
+            <button *ngIf="editingRow === user" mat-icon-button color="primary" (click)="saveEdit(user)">
+              <mat-icon>save</mat-icon>
+            </button>
+            <button *ngIf="editingRow !== user" mat-icon-button color="warn" (click)="confirmDelete(user)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20, 50]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>
+
+<ng-template #deleteDialog>
+  <h2 mat-dialog-title>Confirm Deletion</h2>
+  <mat-dialog-content>Are you sure you want to delete this user? A second admin must approve the deletion.</mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>No</button>
+    <button mat-button color="warn" [mat-dialog-close]="true">Yes</button>
+  </mat-dialog-actions>
+</ng-template>

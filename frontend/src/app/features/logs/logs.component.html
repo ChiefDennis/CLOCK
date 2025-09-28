@@ -1,0 +1,107 @@
+<h1 class="page-title">Logs</h1>
+
+<div class="card">
+  <div class="card-header">
+    <button mat-raised-button
+            color="accent"
+            (click)="downloadLogs()"
+            [disabled]="selection.isEmpty() || loading"
+            style="margin-right: 8px;">
+      <mat-icon>download</mat-icon>
+      Download Selected
+    </button>
+    <button mat-raised-button color="primary" (click)="refreshLogs()" [disabled]="loading">
+      <mat-icon>refresh</mat-icon>
+      Refresh Logs
+    </button>
+  </div>
+
+  <div class="logstable-container">
+    <div *ngIf="loading" class="spinner-overlay">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <table mat-table
+           [dataSource]="dataSource"
+           matSort
+           multiTemplateDataRows
+           [@detailExpand]>
+
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="$event ? toggleAllRows() : null"
+                        [checked]="selection.hasValue() && isAllSelected()"
+                        [indeterminate]="selection.hasValue() && !isAllSelected()"
+                        [aria-label]="checkboxLabel()">
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <mat-checkbox (click)="$event.stopPropagation()"
+                        (change)="$event ? selection.toggle(row) : null"
+                        [checked]="selection.isSelected(row)"
+                        [aria-label]="checkboxLabel(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+        <td mat-cell *matCellDef="let log">{{ log.id }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="username">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Username</th>
+        <td mat-cell *matCellDef="let log">{{ log.username }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Action</th>
+        <td mat-cell *matCellDef="let log">{{ log.action }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="timestamp">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Timestamp</th>
+        <td mat-cell *matCellDef="let log">{{ log.timestamp | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button (click)="$event.stopPropagation(); expandedElement = expandedElement === element ? null : element">
+            <mat-icon>{{ expandedElement === element ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+          <div class="log-detail" *ngIf="element === expandedElement">
+            <div class="detail-grid">
+              <div><strong>Method:</strong> {{element.method}}</div>
+              <div><strong>Status:</strong> {{element.status_code}}</div>
+              <div class="endpoint"><strong>Endpoint:</strong> {{element.endpoint}}</div>
+            </div>
+
+            <strong>Request Data:</strong>
+            <pre (click)="openDataDialog(element.request_data)" class="clickable-data"><code>{{ element.request_data | truncate:500 }}</code><mat-icon class="view-more-icon">open_in_new</mat-icon></pre>
+
+            <strong>Response Data:</strong>
+            <pre (click)="openDataDialog(element.response_data)" class="clickable-data"><code>{{ element.response_data | truncate:500 }}</code><mat-icon class="view-more-icon">open_in_new</mat-icon></pre>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+          class="element-row"
+          [class.expanded]="expandedElement === row"
+          [class.selected]="selection.isSelected(row)"
+          (click)="selection.toggle(row)">
+      </tr>
+      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+
+    </table>
+
+    <mat-paginator [length]="resultsLength" [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>

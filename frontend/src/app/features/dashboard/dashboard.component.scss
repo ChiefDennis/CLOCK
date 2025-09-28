@@ -1,0 +1,218 @@
+@use '../../../styles.scss' as *;
+
+// --- Main Layout Containers ---
+.dashboard-container { padding: 24px; }
+.page-title { font-size: 2rem; font-weight: 600; margin-bottom: 1.5rem; }
+
+// --- Summary Grid ---
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+// --- Class for interactive cards ---
+.card-interactive {
+  cursor: pointer;
+  // Use theme's variables for transitions if available, otherwise this is a good default.
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+
+  &:hover {
+    // Lifts the card up slightly on hover.
+    transform: translateY(-4px);
+    // Adds a more prominent shadow. This is a standard Material Design elevation shadow (dp4).
+    box-shadow: 0 2px 4px -1px rgba(0,0,0,.2),
+                0 4px 5px 0 rgba(0,0,0,.14),
+                0 1px 10px 0 rgba(0,0,0,.12);
+  }
+}
+
+.summary-card {
+  @extend .card;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .card-icon { font-size: 2.5rem; width: 2.5rem; height: 2.5rem; color: var(--mat-sys-on-surface-variant); }
+  .card-value { font-size: 2.5rem; font-weight: 600; line-height: 1; }
+  .card-label { color: var(--mat-sys-on-surface-variant); font-size: 1.5rem; }
+
+  &.warning {
+    background-color: var(--mat-sys-tertiary-container);
+    color: var(--mat-sys-on-tertiary-container);
+    .card-icon, .card-label { color: var(--mat-sys-on-tertiary-container); font-size: 1.5rem; }
+  }
+  &.error {
+    background-color: var(--mat-sys-error-container);
+    color: var(--mat-sys-on-error-container);
+    .card-icon, .card-label { color: var(--mat-sys-on-error-container); font-size: 1.5rem; }
+  }
+  &.info {
+    background-color: var(--mat-sys-primary-container);
+    color: var(--mat-sys-on-primary-container);
+
+    .card-icon, .card-label, .sync-time {
+      color: var(--mat-sys-on-primary-container);
+    }
+    .provider-label {
+      color: var(--mat-sys-on-primary-container-variant);
+    }
+  }
+  &.success {
+    background-color: var(--mat-sys-tertiary-container);
+    color: var(--mat-sys-on-tertiary-container);
+
+    .card-icon, .card-label, .sync-time {
+      color: var(--mat-sys-on-tertiary-container);
+    }
+    .provider-label {
+      color: var(--mat-sys-on-tertiary-container-variant);
+    }
+  }
+
+    // --- Styling for the sync status list ---
+  .sync-status-list {
+    grid-area: list; // Place the list in its grid area
+    display: flex;
+    flex-direction: column;
+    gap: 4px; // Space between each sync item (GCP, AZURE, AWS...)
+  }
+
+  .sync-item {
+    display: flex;
+    justify-content: space-between; // Pushes label and time to opposite ends
+    align-items: baseline;
+    font-size: 0.9rem;
+
+    .provider-label {
+      color: var(--secondary-text-color);
+    }
+
+    .sync-time {
+      font-weight: 500;
+      color: var(--success-color); // Default to a "good" color
+    }
+
+    // Special styling for stale items
+    &.stale {
+      .sync-time {
+        color: var(--warning-color);
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+// --- Main Grid for Charts & Lists ---
+.main-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+}
+
+// --- Chart Card Styles & Fixes ---
+.chart-card {
+  @extend .card;
+  display: flex;
+  flex-direction: column;
+
+  // Force the chart's SVG text elements to use a theme variable.
+  ::ng-deep .ngx-charts text {
+    fill: var(--mat-sys-on-surface-variant) !important;
+  }
+}
+
+.chart-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 350px;
+  flex-grow: 1;
+
+  // Ensure content doesn't overflow
+  overflow: hidden;
+}
+
+// --- NGX-CHARTS LEGEND OVERRIDE ---
+// The following block targets the internal structure of the ngx-charts component
+// to fix the legend overflow issue.
+::ng-deep .chart-container .ngx-charts-outer {
+  // 1. Force the internal wrapper to be a flex column.
+  // This allows us to manage the chart and legend as separate block elements.
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100%;
+
+  // 2. Target the SVG chart element itself.
+  svg.ngx-charts {
+    // Let the chart SVG fill the available vertical space.
+    flex-grow: 1;
+  }
+
+  // 3. Target the legend wrapper.
+  .chart-legend {
+    // CRITICAL: Override the library's absolute positioning.
+    // This puts the legend back into the normal document flow, allowing it
+    // to push the container height down when it wraps.
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+
+    // Ensure the legend doesn't shrink and add some breathing room.
+    flex-shrink: 0;
+    margin-top: 1rem;
+  }
+}
+
+// --- List Card & Item List Styles ---
+.list-card {
+  @extend .card;
+  @media (min-width: 1280px) { grid-column: 1 / -1; }
+}
+
+h2 { margin: 0 0 1rem 0; font-size: 1.25rem; font-weight: 600; }
+
+.item-list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.item-list-header {
+  display: grid;
+  grid-template-columns: 100px 1fr 120px;
+  gap: 1rem;
+  padding: 0 0.75rem 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--mat-sys-on-surface-variant);
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  margin-bottom: 0.5rem;
+}
+
+.list-item {
+  display: grid;
+  grid-template-columns: 100px 1fr 120px;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+  &:hover { background-color: var(--mat-sys-surface-container-high); }
+  .provider-text { font-weight: 600; color: var(--mat-sys-primary); }
+  .item-id { font-family: monospace; font-size: 0.9rem; }
+  .item-days-remaining { font-weight: 600; font-size: 1.1rem; text-align: right; color: var(--mat-sys-error); }
+}
+
+.align-right { text-align: right; }
+
+// --- Placeholder & Spinner ---
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  min-height: 200px;
+  color: var(--mat-sys-on-surface-variant);
+  mat-icon { font-size: 48px; width: 48px; height: 48px; }
+  p { margin-top: 0.5rem; }
+}
+.spinner-container { display: flex; justify-content: center; align-items: center; min-height: 400px; }

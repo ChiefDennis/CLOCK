@@ -1,0 +1,117 @@
+/* Container */
+.logstable-container {
+  border-radius: 12px;
+  overflow: hidden;
+  /* Use the theme's outline color for borders. */
+  border: 1px solid var(--mat-sys-outline-variant);
+}
+
+/* Normal row hover */
+.element-row:not(.expanded):hover {
+  /* Use a surface container color for hover states. */
+  background: var(--mat-sys-surface-container-high);
+}
+
+.element-row.expanded {
+  border-bottom: none;
+}
+
+/* Selected row */
+.mat-row.selected {
+  /* The primary-container is perfect for showing selection. */
+  background-color: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+.mat-row.selected:hover {
+  /* Slightly darken the selection on hover for visual feedback. */
+  filter: brightness(95%);
+}
+
+/* Expanded Detail */
+.detail-row {
+  height: 0;
+}
+
+.log-detail {
+  padding: 16px;
+  /* A slightly different surface color to distinguish the detail panel. */
+  background-color: var(--mat-sys-surface-container);
+  text-align: left;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+  margin-bottom: 16px;
+  text-align: left;
+
+  .endpoint {
+    grid-column: 1 / -1;
+  }
+}
+
+.log-detail pre {
+  /* Use a high-contrast container for code blocks. */
+  background-color: var(--mat-sys-surface-container-highest);
+  color: var(--mat-sys-on-surface-variant);
+  padding: 12px;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 200px;
+  overflow-y: auto;
+  margin: 8px 0;
+}
+
+/* Clickable data blocks */
+.clickable-data {
+  cursor: pointer;
+  position: relative;
+  /* The standard outline color works well for dashed borders. */
+  border: 1px dashed var(--mat-sys-outline);
+  transition: background-color 0.2s ease-in-out;
+  padding: 8px;
+
+  &:hover {
+    background-color: var(--mat-sys-surface-container-high);
+  }
+
+  .view-more-icon {
+    position: absolute;
+    bottom: 4px;
+    right: 8px;
+    font-size: 1rem;
+    /* Use a variant text/icon color for less emphasis. */
+    color: var(--mat-sys-on-surface-variant);
+    opacity: 0.7;
+  }
+}
+
+.table-container table {
+  table-layout: fixed;
+}
+
+/* Spinner */
+
+// This makes the existing container a positioning reference for the spinner overlay.
+.logstable-container {
+  position: relative;
+  min-height: 300px; /* Ensures the container has height while loading */
+}
+
+// This styles the overlay to fill the container and center the spinner.
+// It uses your theme's variables to look correct in both light and dark modes.
+.spinner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(var(--mat-sys-surface-rgb), 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}

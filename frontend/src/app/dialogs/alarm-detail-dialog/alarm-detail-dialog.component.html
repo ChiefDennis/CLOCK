@@ -1,0 +1,43 @@
+<h2 mat-dialog-title [ngClass]="'title-' + alarm.severity.toLowerCase()">
+  <mat-icon>{{ alarm.is_acknowledged ? 'check_circle' : 'error' }}</mat-icon>
+  Alarm Details
+</h2>
+
+<mat-dialog-content class="mat-typography">
+  <div class="detail-grid">
+    <strong>ID:</strong>
+    <span>{{ alarm.id }}</span>
+
+    <strong>Timestamp:</strong>
+    <span>{{ alarm.timestamp | date:'full' }}</span>
+
+    <strong>Severity:</strong>
+    <span>{{ alarm.severity }}</span>
+
+    <strong>Event Type:</strong>
+    <span>{{ alarm.event_type }}</span>
+
+    <strong>Message:</strong>
+    <span class="full-message">{{ alarm.message }}</span>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Close</button>
+  
+  <button 
+    *ngIf="!alarm.is_acknowledged" 
+    mat-flat-button 
+    [ngClass]="'btn-' + alarm.severity.toLowerCase()" 
+    (click)="performAction('acknowledge')">
+    Acknowledge
+  </button>
+
+  <button 
+    *ngIf="alarm.is_acknowledged" 
+    mat-stroked-button 
+    [ngClass]="'btn-stroked-' + alarm.severity.toLowerCase()" 
+    (click)="performAction('reactivate')">
+    Re-activate
+  </button>
+</mat-dialog-actions>

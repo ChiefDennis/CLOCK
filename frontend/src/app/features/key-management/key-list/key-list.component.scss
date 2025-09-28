@@ -1,0 +1,37 @@
+// src/app/key-management/key-list/key-list.component.scss
+
+// Main container for the table, paginator, etc.
+.table-container {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  /* Use the theme's outline color for the border. */
+  border: 1px solid var(--mat-sys-outline-variant);
+}
+
+// Style for table rows that are clickable.
+.clickable-row {
+  cursor: pointer;
+
+  &:hover {
+    /* Use a standard surface container color for the hover effect. */
+    background: var(--mat-sys-surface-container-high);
+  }
+}
+
+// Spinner overlay for loading states.
+.spinner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* * This creates a semi-transparent layer using the current theme's surface color.
+   * It works correctly in both light mode (semi-transparent white) and dark mode (semi-transparent dark).
+   */
+  background: color-mix(in srgb, var(--mat-sys-surface) 70%, transparent);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}

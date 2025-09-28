@@ -1,0 +1,84 @@
+<div class="dashboard-container">
+  <ng-container *ngIf="dashboardData$ | async as data; else loading">
+    <div class="summary-grid">
+      <div class="card summary-card info card-interactive" [routerLink]="['/app/key-management']">
+        <mat-icon class="card-icon">key</mat-icon>
+        <div class="card-value">{{ data.totalKeys }}</div>
+        <div class="card-label">Total Keys</div>
+      </div>
+      <div class="card summary-card error card-interactive" *ngIf="data.activeAlarms > 0" [routerLink]="['/app/alerts']">
+        <mat-icon class="card-icon">notification_important</mat-icon>
+        <div class="card-value">{{ data.activeAlarms }}</div>
+        <div class="card-label">Active Alerts</div>
+      </div>
+      <div class="card summary-card card-interactive" [ngClass]="{'warning': hasStaleSync(data.syncStatuses)}" [routerLink]="['/app/modules']">
+        <mat-icon class="card-icon">sync</mat-icon>
+        <div class="sync-status-list">
+          <div *ngFor="let status of data.syncStatuses" class="sync-item" [ngClass]="{'stale': status.isStale}">
+            <span class="provider-label">{{ status.provider.toUpperCase() }}:</span>
+            <span class="sync-time">{{ formatTimeSince(status.lastSync) }}</span>
+          </div>
+        </div>
+        <div class="card-label">Module Sync Status</div>
+      </div>
+      <div class="card summary-card warning card-interactive" [routerLink]="['/app/pending-actions']">
+        <mat-icon class="card-icon">pending_actions</mat-icon>
+        <div class="card-value">{{ data.pendingActions }}</div>
+        <div class="card-label">Pending Actions</div>
+      </div>
+      <div class="card summary-card card-interactive" [routerLink]="['/app/modules']">
+        <mat-icon class="card-icon">power</mat-icon>
+        <div class="card-value">{{ data.enabledModules }} / {{ data.totalModules }}</div>
+        <div class="card-label">Enabled Modules</div>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <div class="card chart-card card-interactive" [routerLink]="['/app/key-management']">
+        <h2>Keys by Status</h2>
+        <div class="chart-container">
+          <ngx-charts-pie-chart [results]="data.keysByStatus" [customColors]="customChartColors" [doughnut]="true" [labels]="true" [legend]="true" [legendPosition]="legendPosition"></ngx-charts-pie-chart>
+        </div>
+      </div>
+      
+      <div class="card chart-card card-interactive" [routerLink]="['/app/key-management']">
+        <h2>Keys by Provider</h2>
+        <div class="chart-container">
+          <ngx-charts-pie-chart [results]="data.keysByProvider" [scheme]="'vivid'" [doughnut]="true" [labels]="true" [legend]="true" [legendPosition]="legendPosition"></ngx-charts-pie-chart>
+        </div>
+      </div>
+
+      <div class="card list-card card-interactive" [routerLink]="['/app/key-management']">
+        <h2>Keys Nearing Deletion</h2>
+        <ng-container *ngIf="data.keysNearingDeletion.length > 0; else allCleared">
+          <div class="item-list-header">
+            <div>Provider</div>
+            <div>Key ID</div>
+            <div class="align-right">Days Remaining</div>
+          </div>
+          <div class="item-list">
+            <div class="list-item" *ngFor="let key of data.keysNearingDeletion">
+              <div class="provider-text">{{ key.cloud_provider.toUpperCase() }}</div>
+              <div class="item-id">{{ key.key_id }}</div>
+              <div class="item-days-remaining">
+                {{ calculateDaysRemaining(getDeletionDateFromStatus(key.status)) }}
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #allCleared>
+          <div class="placeholder">
+            <mat-icon>check_circle_outline</mat-icon>
+            <p>No keys are pending deletion.</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #loading>
+    <div class="spinner-container">
+      <mat-spinner></mat-spinner>
+    </div>
+  </ng-template>
+</div>

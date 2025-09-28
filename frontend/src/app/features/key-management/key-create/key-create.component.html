@@ -1,0 +1,74 @@
+<div class="form-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Create New Key</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="keyForm" class="form-grid">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <input matInput formControlName="description" placeholder="Primary key for user database">
+          <mat-error *ngIf="keyForm.get('description')?.hasError('required')">
+            Description is required.
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Cloud Provider</mat-label>
+          <mat-select formControlName="cloud_provider">
+            <mat-option *ngFor="let provider of providers" [value]="provider">
+              {{ provider | uppercase }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="keyForm.get('cloud_provider')?.hasError('required')">
+            Provider is required.
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Region</mat-label>
+          <input matInput formControlName="region" placeholder="e.g., us-east-1">
+          <mat-error *ngIf="keyForm.get('region')?.hasError('required')">
+            Region is required.
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Algorithm</mat-label>
+          <input matInput formControlName="algorithm" placeholder="e.g., AES_256">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Purpose</mat-label>
+          <mat-select formControlName="purpose">
+            <mat-option *ngFor="let p of purposes" [value]="p">{{ p }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Labels</mat-label>
+          <input matInput formControlName="labels" placeholder="e.g., env:prod, team:api">
+          <mat-hint>Comma-separated key:value pairs.</mat-hint>
+        </mat-form-field>
+
+        <div class="sub-section">
+          <mat-slide-toggle formControlName="rotation_enabled">Rotation Enabled</mat-slide-toggle>
+          <mat-form-field appearance="outline" *ngIf="keyForm.get('rotation_enabled')?.value">
+            <mat-label>Rotation Days</mat-label>
+            <input matInput type="number" formControlName="rotation_days">
+          </mat-form-field>
+        </div>
+        <div class="sub-section">
+          <mat-label>Protection Level</mat-label>
+          <mat-radio-group formControlName="protection_level" class="radio-group">
+            <mat-radio-button *ngFor="let level of protectionLevels" [value]="level">
+              {{ level }}
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-button (click)="goBack()">Cancel</button>
+      <button mat-raised-button color="primary" [disabled]="keyForm.invalid" (click)="createKey()">
+        Create Key
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

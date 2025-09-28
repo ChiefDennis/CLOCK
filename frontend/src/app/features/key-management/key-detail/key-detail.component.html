@@ -1,0 +1,123 @@
+<div class="detail-container">
+ <ng-container *ngIf="key$ | async as key; else loadingOrError">
+   <mat-card>
+     <mat-card-header>
+       <div class="header-text">
+         <mat-card-title>Key Details</mat-card-title>
+         <mat-card-subtitle>{{ key.key_id }}</mat-card-subtitle>
+       </div>
+       <span class="spacer"></span>
+       <button mat-stroked-button (click)="goBack()" aria-label="Go back">
+         <mat-icon>arrow_back</mat-icon>
+         Back
+       </button>
+     </mat-card-header>
+
+     <mat-card-content>
+       <div class="description-block">
+           <h3>Description</h3>
+           <p>{{ key.description || 'No description provided.' }}</p>
+       </div>
+       <div class="detail-grid">
+         <div class="detail-item"><span class="label">ID</span><span class="value">{{ key.id }}</span></div>
+         <div class="detail-item"><span class="label">Status</span><span class="value">{{ key.status.startsWith('PendingDeletion') ? 'Pending Deletion' : key.status }}</span></div>
+         <div class="detail-item"><span class="label">Primary Key</span><span class="value">{{ key.is_primary ? 'Yes' : 'No' }}</span></div>
+         <div class="detail-item"><span class="label">Cloud Provider</span><span class="value">{{ key.cloud_provider | uppercase }}</span></div>
+         <div class="detail-item"><span class="label">Region</span><span class="value">{{ key.region }}</span></div>
+         <div class="detail-item"><span class="label">Origin</span><span class="value">{{ key.origin }}</span></div>
+         <div class="detail-item"><span class="label">Algorithm</span><span class="value">{{ key.algorithm }}</span></div>
+         <div class="detail-item"><span class="label">Usage</span><span class="value">{{ key.usage }}</span></div>
+         <div class="detail-item"><span class="label">Protection Level</span><span class="value">{{ key.protection_level }}</span></div>
+         <div class="detail-item"><span class="label">Rotation Enabled</span><span class="value">{{ key.rotation_enabled ? 'Yes' : 'No' }}</span></div>
+         <div class="detail-item"><span class="label">Rotation Days</span><span class="value">{{ key.rotation_days || 'N/A' }}</span></div>
+         <div class="detail-item"><span class="label">Created At</span><span class="value">{{ key.created_at | date:'medium' }}</span></div>
+         <div class="detail-item"><span class="label">Last Updated By</span><span class="value">{{ key.last_updated_by }}</span></div>
+         <div class="detail-item"><span class="label">Update Source</span><span class="value">{{ key.last_update_source }}</span></div>
+         <div class="detail-item full-width"><span class="label">Labels</span><span class="value code">{{ formatLabels(key.labels) }}</span></div>
+         <div class="detail-item full-width"><span class="label">Key ARN</span><span class="value code">{{ key.key_arn }}</span></div>
+       </div>
+       
+       <div class="edit-section">
+         <h2>Management</h2>
+         <form [formGroup]="keyEditForm" class="edit-grid">
+           <div class="edit-item">
+             <mat-slide-toggle formControlName="status" [disabled]="!!parsedDeletionDate">
+               {{ keyEditForm.get('status')?.value ? 'Key Enabled' : 'Key Disabled' }}
+             </mat-slide-toggle>
+           </div>
+           <div class="edit-item">
+             <mat-slide-toggle formControlName="rotation_enabled" [disabled]="!!parsedDeletionDate">Rotation Enabled</mat-slide-toggle>
+             <mat-form-field appearance="outline" *ngIf="keyEditForm.get('rotation_enabled')?.value && !key?.rotation_enabled">
+               <mat-label>Rotation Period (Days)</mat-label>
+               <input matInput type="number" formControlName="rotation_days">
+               <mat-error *ngIf="keyEditForm.get('rotation_days')?.hasError('min')">Rotation period must be at least 1 day.</mat-error>
+               <mat-error *ngIf="keyEditForm.get('rotation_days')?.hasError('required')">Rotation period is required.</mat-error>
+             </mat-form-field>
+           </div>
+         </form>
+       </div>
+     </mat-card-content>
+
+     <mat-card-actions align="end" *ngIf="keyEditForm.dirty">
+       <button mat-button (click)="cancelChanges()">Cancel</button>
+       <button mat-raised-button color="primary" [disabled]="keyEditForm.invalid || isLoading" (click)="saveChanges()">
+         <mat-icon>save</mat-icon>
+         Save Changes
+       </button>
+     </mat-card-actions>
+   </mat-card>
+
+   <div class="danger-zone">
+     <div *ngIf="parsedDeletionDate; else scheduleDeletion">
+       <h2 class="danger-zone-title">Deletion Scheduled</h2>
+       <mat-divider></mat-divider>
+       <div class="danger-zone-content">
+         <div class="danger-text">
+           <h3>This key is pending deletion</h3>
+           <p>It is scheduled for permanent deletion on <strong>{{ parsedDeletionDate | date:'fullDate' }} at {{ parsedDeletionDate | date:'shortTime' }}</strong>.</p>
+         </div>
+       </div>
+     </div>
+
+     <ng-template #scheduleDeletion>
+       <h2 class="danger-zone-title">Danger Zone</h2>
+       <mat-divider></mat-divider>
+       <div class="danger-zone-content">
+         <div class="danger-text">
+           <h3>Schedule key for deletion</h3>
+           <p *ngIf="key?.cloud_provider === 'aws'">For AWS keys, the deletion period must be between 7 and 30 days. This action cannot be undone.</p>
+           <p *ngIf="key?.cloud_provider !== 'aws'">Specify the deletion period in days. This action cannot be undone.</p>
+         </div>
+         <div class="danger-form">
+           <mat-form-field appearance="outline" class="days-input">
+             <mat-label>Days (7-30 for AWS)</mat-label>
+             <input matInput type="number" #daysInput required min="7" max="30" />
+           </mat-form-field>
+           <button mat-raised-button color="warn" (click)="deleteKey(daysInput.value)" [disabled]="!daysInput.value || isLoading">
+             <mat-icon>delete_forever</mat-icon>
+             Schedule Deletion
+           </button>
+         </div>
+       </div>
+     </ng-template>
+   </div>
+ </ng-container>
+
+ <ng-template #loadingOrError>
+   <div class="spinner-container">
+     <mat-spinner *ngIf="!key"></mat-spinner>
+   </div>
+ </ng-template>
+</div>
+
+<ng-template #deleteKeyDialog>
+ <h2 mat-dialog-title>Confirm Schedule Deletion</h2>
+ <mat-dialog-content>
+   <p>Are you sure you want to schedule this key for deletion?</p>
+   <p>This action cannot be undone. The key will be permanently deleted after the specified retention period.</p>
+ </mat-dialog-content>
+ <mat-dialog-actions align="end">
+   <button mat-button mat-dialog-close>Cancel</button>
+   <button mat-raised-button color="warn" [mat-dialog-close]="true" cdkFocusInitial>Schedule Deletion</button>
+ </mat-dialog-actions>
+</ng-template>

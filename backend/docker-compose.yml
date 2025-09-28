@@ -1,0 +1,134 @@
+services:
+  # ------------------- App services (internal only) -------------------
+
+  orchestrator:
+    build:
+      context: ./orchestrator
+    container_name: orchestrator
+    environment:
+      PYTHONPATH: /app
+
+      # --- CHANGE IN REAL ENV ---
+      JWT_SECRET_KEY: CHANGEME_SUPER_SECRET
+      POSTGRES_DB: db
+      POSTGRES_USER: dbuser
+      POSTGRES_PASSWORD: dbpass 
+      POSTGRES_PORT: 5432
+      POSTGRES_HOST: db
+
+      # --- Email Notifications (CHANGE THIS) ---
+      MAIL_SERVER: "smtp.gmail.com"
+      MAIL_PORT: 587
+      MAIL_USE_TLS: "True"
+      MAIL_USERNAME: "email@gmail.com"
+      MAIL_PASSWORD: "gmail-app-password" # Use an App Password
+      MAIL_RECIPIENT: "alarm-recipient@example.com"
+    depends_on:
+      - db
+    networks: [app-net]
+    restart: unless-stopped
+
+  aws_module:
+    build:
+      context: ./modules/aws
+    container_name: aws_module
+    environment:
+      AWS_ACCESS_KEY_ID: test               # CHANGE THIS
+      AWS_SECRET_ACCESS_KEY: test           # CHANGE THIS
+      AWS_REGION: us-east-1                 # CHANGE THIS
+      # In mock mode, point boto3 to Moto (service name below). Remove in prod.
+      AWS_ENDPOINT_URL: http://moto:5000
+    networks: [app-net]
+    restart: unless-stopped
+
+  azure_module:
+    build:
+      context: ./modules/azure
+    container_name: azure_module
+    environment:
+      AZURE_KV_URL: https://localhost:4997    # CHANGE THIS
+      AZURE_TENANT_ID: demo                   # CHANGE THIS
+      AZURE_CLIENT_ID: demo                   # CHANGE THIS
+      AZURE_CLIENT_SECRET: demo               # CHANGE THIS
+
+    networks: [app-net]
+    restart: unless-stopped
+
+  gcp_module:
+    build:
+      context: ./modules/gcp
+    container_name: gcp_module
+    environment:
+      # --- GCP Configuration ---
+      GCP_PROJECT_ID: your-gcp-project-id
+      GCP_LOCATION: global
+      GCP_KEYRING_ID: my-test-keyring
+      
+      # --- Mock Configuration (Enabled) ---
+      # This line MUST be active and spelled correctly. Comment it out if not in MOCK mode.
+      GCP_KMS_BASE_URL: http://wiremock-kms:8080
+      GRPC_DNS_RESOLVER: native
+
+      # --- Real API Authentication (Disabled) ---
+      # These lines should be commented out for mock mode
+      # GOOGLE_APPLICATION_CREDENTIALS: /credentials.json
+    #volumes:
+      # This volume should be commented out for mock mode
+      # - ~/.config/gcloud/application_default_credentials.json:/credentials.json:ro
+    networks: [app-net]
+    restart: unless-stopped
+
+  db:
+    image: postgres:15
+    container_name: db
+    environment:
+      POSTGRES_DB: db             # CHANGE THIS
+      POSTGRES_USER: dbuser       # CHANGE THIS
+      POSTGRES_PASSWORD: dbpass   # CHANGE THIS
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dbuser -d db || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    networks: [app-net]
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.29.1
+    container_name: nginx
+    ports:
+      - "80:80"  # single front door; orchestrator stays internal
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on: [orchestrator]
+    networks: [app-net]
+    restart: unless-stopped
+
+  # ------------------- Mock services (enable with --profile mocks) -------------------
+
+  moto:
+    image: motoserver/moto:latest
+    container_name: moto
+    command: ["-H", "0.0.0.0", "-p", "5000"]
+    ports:
+    - "5000:5000"
+    healthcheck:
+      test: ["CMD-SHELL", "python - <<'PY'\nimport socket; s=socket.socket(); s.settimeout(1); s.connect(('127.0.0.1',5000)); print('ok')\nPY"]
+      interval: 2s
+      timeout: 2s
+      retries: 40
+    networks: [app-net]
+    profiles: ["mocks"]
+    restart: unless-stopped
+
+# ----------------------- Volumes and networks ------------------------------------
+
+volumes:
+  postgres_data:
+
+networks:
+  app-net:
+    driver: bridge
+    

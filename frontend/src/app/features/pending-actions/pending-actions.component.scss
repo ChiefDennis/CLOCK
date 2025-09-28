@@ -1,0 +1,43 @@
+/* pending-actions.component.scss */
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  
+  table {
+    width: 100%;
+  }
+
+  th {
+    padding: 20px 14px; 
+    color: var(--mat-sys-on-surface-variant);
+    font-weight: 600;
+    text-align: left;
+    border-bottom: 2px solid var(--mat-sys-outline-variant);
+  }
+
+  td {
+    padding: 14px 14px; 
+    vertical-align: center;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+  }
+
+  .principal-info {
+    font-weight: 500;
+  }
+  .secondary-info {
+    font-size: 0.875rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  .actions-cell, .actions-header {
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .actions-cell > div {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+}

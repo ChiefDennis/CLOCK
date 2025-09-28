@@ -1,0 +1,36 @@
+// Global h1 styles should apply, this is for any specific overrides
+.page-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.crypto-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.operation-selector {
+  display: flex;
+  gap: 2rem;
+}
+
+.text-areas {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.text-area-field {
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}

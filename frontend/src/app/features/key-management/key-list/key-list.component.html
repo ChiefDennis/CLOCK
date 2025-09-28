@@ -1,0 +1,57 @@
+<h1 class="page-title">Key Management</h1>
+
+<div class="card">
+  <div class="card-header">
+    <button mat-raised-button color="accent" routerLink="/app/key-management/create" style="margin-right: 8px;">
+      <mat-icon>add_circle_outline</mat-icon>
+      Create Key
+    </button>
+    <button mat-raised-button color="primary" (click)="loadKeys()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+
+  <div class="table-container">
+    <div *ngIf="isLoading" class="spinner-overlay">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <table mat-table [dataSource]="dataSource" matSort matSortActive="created_at" matSortDirection="desc" class="mat-elevation-z0">
+
+      <ng-container matColumnDef="cloud_provider">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Provider</th>
+        <td mat-cell *matCellDef="let key">{{ key.cloud_provider | uppercase }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="key_id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Key ID</th>
+        <td mat-cell *matCellDef="let key">{{ key.key_id }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="algorithm">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Algorithm</th>
+        <td mat-cell *matCellDef="let key">{{ key.algorithm }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="created_at">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Created At</th>
+        <td mat-cell *matCellDef="let key">{{ key.created_at | date:'yyyy-MM-dd HH:mm' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+        <td mat-cell *matCellDef="let key">{{ key.status }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row
+          *matRowDef="let row; columns: displayedColumns;"
+          (click)="viewKeyDetails(row)"
+          class="clickable-row">
+      </tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>

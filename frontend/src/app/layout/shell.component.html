@@ -1,0 +1,38 @@
+<div class="layout">
+  <aside class="sidenav">
+    <div class="brand">
+      <img  src="assets/ui/logo.png" alt="brand" style="width:28px;height:28px;border-radius:50%;object-fit:cover">
+      <span>{{ username() }}</span>
+    </div>
+    
+    <nav>
+      <a routerLink="/app/dashboard" routerLinkActive="active" class="nav-item">Dashboard</a>
+      <a routerLink="/app/key-management" routerLinkActive="active" class="nav-item">Key Management</a>
+      <a routerLink="/app/crypto-tools" routerLinkActive="active" class="nav-item">Crypto Tools</a>
+      <a routerLink="/app/pending-actions" routerLinkActive="active" class="nav-item">Pending Actions</a>
+      <a routerLink="/app/logs" routerLinkActive="active" class="nav-item">Logs</a>
+      <a routerLink="/app/alerts" routerLinkActive="active" class="nav-item">Alerts</a>
+      <a routerLink="/app/users" routerLinkActive="active" class="nav-item">User Management</a>
+      <a routerLink="/app/modules" routerLinkActive="active" class="nav-item">Modules & Sync</a>
+      <a routerLink="/app/reports" routerLinkActive="active" class="nav-item">Reports</a>
+    </nav>
+
+  </aside>
+
+  <header class="topbar">
+    <div><strong>CLOCK: Cloud Lifecycle Orchestrator for Cryptographic Keys</strong></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      
+      <button mat-icon-button (click)="toggleTheme()" aria-label="Toggle light/dark theme">
+        <mat-icon *ngIf="!isDarkMode">light_mode</mat-icon>
+        <mat-icon *ngIf="isDarkMode">dark_mode</mat-icon>
+      </button>
+
+      <button class="btn btn-ghost" (click)="auth.logout()">Log out</button>
+    </div>
+  </header>
+
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

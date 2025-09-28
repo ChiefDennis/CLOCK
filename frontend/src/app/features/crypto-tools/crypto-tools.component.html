@@ -1,0 +1,49 @@
+<div class="crypto-container">
+  <h1 class="page-title">Crypto Tools</h1>
+  <div class="card">
+    <form [formGroup]="cryptoForm" (ngSubmit)="performOperation()" class="crypto-form">
+      
+      <mat-form-field appearance="outline" class="key-selector">
+        <mat-label>Select Active Key</mat-label>
+        <mat-select formControlName="key">
+          <mat-option *ngFor="let key of keys$ | async" [value]="key">
+            {{ key.key_id }} ({{ key.cloud_provider | uppercase }})
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="cryptoForm.get('key')?.hasError('required')">A key is required.</mat-error>
+      </mat-form-field>
+      
+      <mat-radio-group formControlName="operation" class="operation-selector">
+        <mat-radio-button value="encrypt">Encrypt</mat-radio-button>
+        <mat-radio-button value="decrypt">Decrypt</mat-radio-button>
+      </mat-radio-group>
+      
+      <div class="text-areas">
+        <mat-form-field appearance="outline" class="text-area-field">
+          <mat-label>Input</mat-label>
+          <textarea matInput formControlName="inputText" rows="8" placeholder="Enter plaintext or ciphertext..."></textarea>
+          <mat-error *ngIf="cryptoForm.get('inputText')?.hasError('required')">Input text is required.</mat-error>
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline" class="text-area-field">
+          <mat-label>Output</mat-label>
+          <textarea matInput formControlName="outputText" rows="8" readonly></textarea>
+          <button mat-icon-button matSuffix (click)="copyToClipboard()" *ngIf="cryptoForm.get('outputText')?.value" aria-label="Copy output to clipboard" type="button">
+            <mat-icon>content_copy</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
+      <div class="actions">
+        <button mat-button type="button" (click)="clearForm()" [disabled]="isLoading">
+          Clear Form
+        </button>
+        
+        <button mat-raised-button color="primary" type="submit" [disabled]="cryptoForm.invalid || isLoading">
+          <span *ngIf="!isLoading">Run Operation</span>
+          <mat-spinner *ngIf="isLoading" diameter="24"></mat-spinner>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

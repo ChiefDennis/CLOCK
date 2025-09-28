@@ -1,0 +1,26 @@
+// Style the dialog title with our existing severity colors
+.title-high { color: #f44336; }
+.title-medium { color: #ff9800; }
+.title-low { color: #2196f3; }
+.title-info { color: #9e9e9e; }
+
+[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 16px;
+
+  strong {
+    font-weight: 500;
+  }
+}
+
+.full-message {
+  white-space: pre-wrap; // Preserve line breaks in the message
+  word-break: break-word;
+}

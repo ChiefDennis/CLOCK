@@ -1,0 +1,39 @@
+<div class="modules-container">
+  <h1 class="page-title">Modules & Sync</h1>
+  <p class="page-subtitle">Enable or disable cloud provider modules and trigger manual data synchronization.</p>
+  
+  <div class="card">
+    <ng-container *ngIf="modules$ | async as modules; else loading">
+      <div *ngFor="let module of modules; let last = last">
+        <div class="module-row">
+          <div class="provider-info">
+            <span class="provider-name">{{ module.provider_name | uppercase }}</span>
+            <span class="status-indicator" [class.enabled]="module.is_enabled">
+              {{ module.is_enabled ? 'Enabled' : 'Disabled' }}
+            </span>
+            <span class="last-synced" *ngIf="module.last_synced_at">
+              Last synced: {{ module.last_synced_at | date:'short' }}
+            </span>
+          </div>
+          <div class="module-actions">
+            <mat-slide-toggle [checked]="module.is_enabled" (change)="onToggleModule($event, module)"></mat-slide-toggle>
+            <button mat-stroked-button color="primary" [disabled]="!module.is_enabled || syncing[module.provider_name]" (click)="onSync(module.provider_name)">
+              <div *ngIf="!syncing[module.provider_name]" class="button-content">
+                <mat-icon>sync</mat-icon>
+                <span>Sync Now</span>
+              </div>
+              <mat-spinner *ngIf="syncing[module.provider_name]" diameter="24"></mat-spinner>
+            </button>
+          </div>
+        </div>
+        <mat-divider *ngIf="!last"></mat-divider>
+      </div>
+    </ng-container>
+
+    <ng-template #loading>
+      <div class="spinner-container">
+        <mat-spinner></mat-spinner>
+      </div>
+    </ng-template>
+  </div>
+</div>

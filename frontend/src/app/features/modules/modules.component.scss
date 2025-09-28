@@ -1,0 +1,66 @@
+.modules-container {
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+  color: var(--mat-sys-on-surface-variant);
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
+
+.module-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 0;
+}
+
+.provider-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.provider-name {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.status-indicator {
+  font-size: 0.8rem;
+  color: var(--mat-sys-on-surface-variant);
+  &.enabled {
+    color: var(--mat-sys-primary);
+  }
+}
+
+.module-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.button-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.last-synced {
+  font-size: 0.8rem;
+  color: var(--mat-sys-on-surface-variant);
+  margin-top: 4px;
+}
