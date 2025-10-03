@@ -10,8 +10,8 @@ services:
       args:
 
       # Modify these with the actual URLs of the backend.
-        - NG_APP_API_BASE_URL=http://localhost/api    # CHANGE THIS
-        - NG_APP_API_AUTH_URL=http://localhost/auth   # CHANGE THIS
+        - NG_APP_API_BASE_URL=http://localhost:8181/api    # CHANGE THIS IP AND PORT
+        - NG_APP_API_AUTH_URL=http://localhost:8181/auth   # CHANGE THIS IP AND PORT
 
     # Maps port 8080 on your computer to port 80 inside the container.
     ports:
@@ -22,6 +22,6 @@ services:
       # This variable will be passed to the Nginx container at runtime
       # Change these to reflect the desired backend host and port
       - BACKEND_HOST=localhost  # CHANGE THIS
-      - BACKEND_PORT=80             # CHANGE THIS
+      - BACKEND_PORT=8181             # CHANGE THIS
     # Ensures the container restarts automatically if it stops.
     restart: unless-stopped
