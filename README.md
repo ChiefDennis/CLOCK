@@ -78,4 +78,4 @@ The default credentials are the following:
 
 ### Documentation
 
-The Swagger documentation is available at http://[backend-host]/docs/swagger-ui
+The Swagger documentation is available at **http://localhost:8181/docs/swagger-ui**
