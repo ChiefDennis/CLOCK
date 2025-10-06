@@ -23,7 +23,7 @@ def create_app():
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
     app.config["JWT_IDENTITY_CLAIM"] = "sub"
-    app.config["API_TITLE"] = "Key Management API"
+    app.config["API_TITLE"] = "CLOCK API documentation"
     app.config["API_VERSION"] = "v1"
     app.config["OPENAPI_VERSION"] = "3.0.3"
     app.config["OPENAPI_URL_PREFIX"] = "/docs"
