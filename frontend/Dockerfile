@@ -38,7 +38,7 @@ RUN npm run build -- --configuration production
 
 # STAGE 2: Serve the application with Nginx
 # We use the latest stable Nginx image.
-FROM nginx:1.29.1
+FROM nginx:1.29.3
 
 # ---- NEW: Install 'gettext' which provides the 'envsubst' utility ----
 RUN apt-get update && apt-get install -y gettext-base

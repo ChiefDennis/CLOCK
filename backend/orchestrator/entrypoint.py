@@ -87,8 +87,11 @@ def initialize_db(app):
             # Check if a status entry for the provider already exists.
             if not ModuleStatus.query.filter_by(provider_name=provider).first():
                 print(f"Setting default status for module: {provider}")
-                # Create a new status entry, enabling the module by default.
-                status = ModuleStatus(provider_name=provider, is_enabled=True)
+                # Create a new status entry, enabling only AWS by default.
+                if provider=="aws":
+                    status = ModuleStatus(provider_name=provider, is_enabled=True)
+                else:
+                    status = ModuleStatus(provider_name=provider, is_enabled=False)
                 db.session.add(status)
         
         # Commit all new module statuses to the database in a single transaction.
